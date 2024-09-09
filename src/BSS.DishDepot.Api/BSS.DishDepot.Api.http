@@ -1,0 +1,6 @@
+@BSS.DishDepot.Api_HostAddress = http://localhost:5128
+
+GET {{BSS.DishDepot.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
