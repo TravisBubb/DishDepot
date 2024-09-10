@@ -1,4 +1,5 @@
 ﻿using BSS.DishDepot.Domain.Entities;
+using BSS.DishDepot.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BSS.DishDepot.Infrastructure.Dal;

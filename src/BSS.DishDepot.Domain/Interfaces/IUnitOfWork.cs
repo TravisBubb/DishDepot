@@ -1,7 +1,7 @@
 ﻿using BSS.DishDepot.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace BSS.DishDepot.Infrastructure.Dal;
+namespace BSS.DishDepot.Domain.Interfaces;
 
 public interface IReadOnlyUnitOfWork
 {

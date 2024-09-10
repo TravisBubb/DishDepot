@@ -1,4 +1,6 @@
-﻿using Mapster;
+﻿using BSS.DishDepot.Application.Dto;
+using Mapster;
+using User = BSS.DishDepot.Domain.Entities.User;
 
 namespace BSS.DishDepot.Application.Mappers
 {
@@ -6,7 +8,22 @@ namespace BSS.DishDepot.Application.Mappers
     {
         public void Register(TypeAdapterConfig config)
         {
-            
+            config.ForType<User, UserResponse>()
+                .Map(dest => dest.User, src => src);
+
+            config.ForType<User, Dto.User>();
+        }
+    }
+
+    public static class UserMapperExtensions
+    {
+        public static User ToEntity(this PostUser source, string passwordHash)
+        {
+            return new User
+            {
+                Email = source.Email,
+                PasswordHash = passwordHash
+            };
         }
     }
 }
