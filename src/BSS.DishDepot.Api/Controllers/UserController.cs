@@ -19,6 +19,13 @@ public class UserController : ControllerBase
         _builder = builder;
     }
 
+    [HttpGet("{id}", Name = "GetUser")]
+    public async Task<IActionResult> GetUser([FromRoute] string id)
+    {
+        var result = await _mediator.Send(new GetUserQuery(id));
+        return _builder.OkResult<Domain.Entities.User, UserResponse>(result, ControllerContext);
+    }
+
     [HttpPost("", Name = "PostUser")]
     public async Task<IActionResult> PostUser([FromBody] PostUserRequest request)
     {
@@ -31,6 +38,6 @@ public class UserController : ControllerBase
     [HttpPut("{id}", Name = "PutUser")]
     public async Task<IActionResult> PutUser([FromRoute] string id, [FromBody] PutUserRequest request)
     {
-        return Ok();
+        throw new NotImplementedException();
     }
 }
