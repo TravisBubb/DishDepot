@@ -7,29 +7,32 @@ using Microsoft.Extensions.Logging;
 
 namespace BSS.DishDepot.Application.Cqrs.Users
 {
-    public class GetUserQueryHandler : IRequestHandler<GetUserQuery, Result<User>>
+    public class GetMyUserQueryHandler : IRequestHandler<GetMyUserQuery, Result<User>>
     {
-        private readonly ILogger<GetUserQueryHandler> _logger;
+        private readonly ILogger<GetMyUserQueryHandler> _logger;
         private readonly IReadOnlyUnitOfWork _uow;
+        private readonly IIdentityContextAccessor _accessor;
 
-        public GetUserQueryHandler(ILogger<GetUserQueryHandler> logger, IReadOnlyUnitOfWork uow)
+        public GetMyUserQueryHandler(
+            ILogger<GetMyUserQueryHandler> logger, 
+            IReadOnlyUnitOfWork uow,
+            IIdentityContextAccessor accessor)
         {
             _logger = logger;
             _uow = uow;
+            _accessor = accessor;
         }
 
-        public async Task<Result<User>> Handle(GetUserQuery request, CancellationToken cancellationToken)
+        public async Task<Result<User>> Handle(GetMyUserQuery request, CancellationToken cancellationToken)
         {
             try
             {
-                if (!Guid.TryParse(request.UserId, out var userId))
-                    return Result<User>.NotFound($"User {request.UserId} not found");
-
-                var user = await _uow.Query<User>().FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+                var user = await _uow.Query<User>().FirstOrDefaultAsync(u => 
+                    u.Id == _accessor.IdentityContext.UserId, cancellationToken);
 
                 return user is not null
                     ? Result<User>.Success(user)
-                    : Result<User>.NotFound($"User {userId} not found.");
+                    : Result<User>.NotFound($"User not found.");
             }
             catch (Exception ex)
             {

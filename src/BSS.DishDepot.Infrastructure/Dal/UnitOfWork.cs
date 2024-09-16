@@ -15,7 +15,9 @@ public class ReadOnlyUnitOfWork<TContext> : IReadOnlyUnitOfWork<TContext>
     }
 
     public IQueryable<TEntity> Query<TEntity>() where TEntity : Entity
-        => Context.Set<TEntity>().AsNoTracking().AsQueryable();
+    {
+        return Context.Set<TEntity>().AsNoTracking().AsQueryable();
+    }
 }
 
 public class UnitOfWork<TContext> : ReadOnlyUnitOfWork<TContext>, IUnitOfWork<TContext>

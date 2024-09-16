@@ -11,7 +11,8 @@ namespace BSS.DishDepot.Application.Mappers
             config.ForType<User, UserResponse>()
                 .Map(dest => dest.User, src => src);
 
-            config.ForType<User, Dto.User>();
+            config.ForType<User, Dto.User>()
+                .Map(dest => dest.ETag, src => Convert.ToBase64String(src.ETag));
         }
     }
 
