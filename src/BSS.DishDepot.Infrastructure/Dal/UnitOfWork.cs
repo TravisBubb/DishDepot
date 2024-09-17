@@ -8,22 +8,32 @@ public class ReadOnlyUnitOfWork<TContext> : IReadOnlyUnitOfWork<TContext>
     where TContext : DbContext
 {
     protected readonly TContext Context;
+    protected readonly IIdentityContextAccessor Accessor;
 
-    public ReadOnlyUnitOfWork(TContext context)
+    public ReadOnlyUnitOfWork(TContext context, IIdentityContextAccessor accessor)
     {
         Context = context;
+        Accessor = accessor;
     }
 
     public IQueryable<TEntity> Query<TEntity>() where TEntity : Entity
     {
-        return Context.Set<TEntity>().AsNoTracking().AsQueryable();
+        var query = Context.Set<TEntity>().AsNoTracking().AsQueryable();
+
+        if (!typeof(IUser).IsAssignableFrom(typeof(TEntity)))
+            return query;
+
+        if (Accessor.IdentityContext.UserId == default)
+            throw new Exception("UserId not set in identity context.");
+
+        return query.Where(e => ((IUser)e).UserId == Accessor.IdentityContext.UserId);
     }
 }
 
 public class UnitOfWork<TContext> : ReadOnlyUnitOfWork<TContext>, IUnitOfWork<TContext>
     where TContext : DbContext
 {
-    public UnitOfWork(TContext context) : base(context) 
+    public UnitOfWork(TContext context, IIdentityContextAccessor accessor) : base(context, accessor) 
     { 
     }
 
@@ -31,8 +41,11 @@ public class UnitOfWork<TContext> : ReadOnlyUnitOfWork<TContext>, IUnitOfWork<TC
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
 
-        if (entity.CreatedDateTime == default)
-            entity.CreatedDateTime = DateTime.UtcNow;
+        if (entity is ICreatedDate createdDateEntity && createdDateEntity.CreatedDateTime == default)
+            createdDateEntity.CreatedDateTime = DateTime.UtcNow;
+
+        if (entity is IUser userEntity)
+            userEntity.UserId = Accessor.IdentityContext.UserId;
 
         Context.Add(entity);
     }

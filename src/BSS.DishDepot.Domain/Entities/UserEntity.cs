@@ -1,6 +1,6 @@
-﻿using BSS.DishDepot.Domain.Entities;
+﻿using BSS.DishDepot.Domain.Interfaces;
 
-namespace BSS.DishDepot.Domain.Interfaces
+namespace BSS.DishDepot.Domain.Entities
 {
     public abstract class UserEntity : Entity, IUser
     {

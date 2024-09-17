@@ -1,0 +1,11 @@
+﻿CREATE TABLE [DishDepot].[RecipeSteps]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+	[RecipeId] UNIQUEIDENTIFIER NOT NULL,
+	[Sequence] INT NOT NULL DEFAULT 0,
+	[Description] NVARCHAR(512) NOT NULL,
+	CONSTRAINT FK_RecipeSteps_Recipe FOREIGN KEY (RecipeId) REFERENCES DishDepot.Recipes(Id)
+);
+
+GO
+

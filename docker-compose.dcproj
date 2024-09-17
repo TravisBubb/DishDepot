@@ -5,9 +5,6 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <DockerPublishLocally>False</DockerPublishLocally>
     <ProjectGuid>d4376acc-4de9-49e8-b639-6a361404e4f8</ProjectGuid>
-    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/weatherforecast</DockerServiceUrl>
-    <DockerServiceName>bss.dishdepot.api</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">

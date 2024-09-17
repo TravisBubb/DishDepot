@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseServiceProviderFactory(new DryIocServiceProviderFactory());
@@ -21,8 +22,9 @@ builder.Services.AddLogging();
 builder.Services.AddMvc()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
 builder.Services.AddCors(options =>
