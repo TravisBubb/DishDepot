@@ -29,11 +29,13 @@ namespace BSS.DishDepot.Api.Controllers
             return _builder.OkResult<Recipe, RecipeResponse>(result, ControllerContext);
         }
 
+        // TODO: Pagination and Filtering
         [Authorize]
         [HttpGet("", Name = "GetRecipes")]
         public async Task<IActionResult> GetRecipes()
         {
-            return Ok();
+            var result = await _mediator.Send(new GetRecipesQuery());
+            return _builder.OkResult<List<Recipe>, RecipesResponse>(result, ControllerContext);
         }
 
         [Authorize]

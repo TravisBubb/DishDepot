@@ -15,6 +15,9 @@ namespace BSS.DishDepot.Application.Mappers
 
             config.ForType<Recipe, Dto.Recipe>()
                 .Map(dest => dest.ETag, src => Convert.ToBase64String(src.ETag));
+
+            config.ForType<List<Recipe>, RecipesResponse>()
+                .Map(dest => dest.Recipes, src => src);
         }
     }
 
