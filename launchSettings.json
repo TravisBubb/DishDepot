@@ -4,6 +4,7 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
+        "bss.dishdepot.webapp": "StartDebugging",
         "bss.dishdepot.api": "StartDebugging"
       }
     }

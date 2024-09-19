@@ -1,0 +1,77 @@
+﻿ @* @inject ISessionStorageService SessionStorage
+
+ <AuthorizeView>
+     <Authorized>
+     <h1>Manage Blog Posts</h1>
+     @if (_blogPosts == null)
+     {
+         <p><em>Loading...</em></p>
+     }
+     else
+     {
+         <table class="table">
+         <thead>
+             <tr>
+                 <td>Id</td>
+                 <th>Title</th>
+                 <th>Category</th>
+                 <th>Author</th>
+                 <th>Created Date</th>
+                 <th>Actions</th>
+             </tr>
+         </thead>
+         <tbody>
+             @foreach (var blogpost in _blogPosts)
+                 {
+                     <tr>
+                         <td @onclick="@(e => ShowBlogDetails(blogpost!.Id))">@blogpost.Id</td>
+                         <td @onclick="@(e => ShowBlogDetails(blogpost!.Id))">@blogpost.Title</td>
+                         <td @onclick="@(e => ShowBlogDetails(blogpost!.Id))">@blogpost.Category</td>
+                         <td @onclick="@(e => ShowBlogDetails(blogpost!.Id))">@blogpost.Author</td>
+                         <td @onclick="@(e => ShowBlogDetails(blogpost!.Id))">
+                             @Convert.ToDateTime(@blogpost.DateCreated).ToString("MMMM dd, yyyy")</td>
+                         <td>
+                             <a href="/blogposts/update/@blogpost.Id"><span class="oi oi-pencil" aria-hidden="true"></span></a>
+                             <a href="#" @onclick="@(e => DeleteBlogPost(blogpost.Id))"><span class="oi oi-trash"
+                                     aria-hidden="true"></span></a>
+                         </td>
+                     </tr>
+                 }
+             </tbody>
+         </table>
+     }
+     <div>
+         <a href="/blogposts/new"><span class="oi oi-plus" aria-hidden="true"></span></a>
+     </div>
+     </Authorized>
+     <NotAuthorized>
+         You are not authorized
+     </NotAuthorized>
+ </AuthorizeView>
+
+ @code {
+     private List<BlogPost>? _blogPosts = new List<BlogPost>();
+     private BlogPost? _selectedBlogPost;
+     protected override async Task OnInitializedAsync()
+     {
+         _blogPosts = await BlogPostService.GetBlogPosts();
+     }
+     private void Select(BlogPost blogPost)
+     {
+         _selectedBlogPost = blogPost;
+     }
+     private void ShowBlogDetails(string id)
+     {
+         NavigationManager.NavigateTo($"/blogpostdetails/{id}");
+     }
+     private async void DeleteBlogPost(string id)
+     {
+         var token = await SessionStorage.GetItemAsync<string>("token");
+         if (!string.IsNullOrEmpty(token))
+         {
+             await BlogPostService.DeleteBlogPost(id, token);
+         }
+         NavigationManager.NavigateTo($"/blogposts");
+     }
+ }
+ *@

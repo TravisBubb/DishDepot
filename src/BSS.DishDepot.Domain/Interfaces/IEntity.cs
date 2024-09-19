@@ -3,5 +3,4 @@
 public interface IEntity<T>
 {
     T Id { get; }
-    DateTime CreatedDateTime { get; }
 }

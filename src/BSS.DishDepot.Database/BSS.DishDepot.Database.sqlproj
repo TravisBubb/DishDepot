@@ -61,6 +61,9 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="DishDepotSchema.sql" />
+    <Build Include="Tables\Recipes.sql" />
+    <Build Include="Tables\RecipeSteps.sql" />
+    <Build Include="Tables\RecipeIngredients.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Users.sql" />
