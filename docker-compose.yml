@@ -1,6 +1,15 @@
 version: '3.4'
 
 services:
+  bss.dishdepot.webapp:
+    image: ${DOCKER_REGISTRY-}bssdishdepotwebapp
+    build:
+      context: .
+      dockerfile: src/BSS.DishDepot.WebApp/Dockerfile
+    depends_on:
+      - bss.dishdepot.api
+    ports:
+      - "6030:6030"     
   bss.dishdepot.api:
     image: ${DOCKER_REGISTRY-}bssdishdepotapi
     build:
@@ -18,9 +27,9 @@ services:
       - MSSQL_SA_PASSWORD=Password1!
       - MSSQL_PID=Developer
     volumes:
-      - ./.containers/homeprojects-db/data:/var/opt/mssql/data
-      - ./.containers/homeprojects-db/log:/var/opt/mssql/log
-      - ./.containers/homeprojects-db/secrets:/var/opt/mssql/secrets
+      - ./.containers/dishdepot-db/data:/var/opt/mssql/data
+      - ./.containers/dishdepot-db/log:/var/opt/mssql/log
+      - ./.containers/dishdepot-db/secrets:/var/opt/mssql/secrets
     ports:
       - 1433:1433
 volumes:
