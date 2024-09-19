@@ -60,5 +60,15 @@ namespace BSS.DishDepot.Application.Mappers
                 MeasurementValue = source.MeasurementValue
             };
         }
+
+        public static void UpdateFromDto(this Recipe recipe, PutRecipe source)
+        {
+            recipe.ETag = source.ETag;
+            recipe.Name = source.Name;
+            recipe.Description = source.Description;
+            recipe.PrepTime = source.PrepTime;
+            recipe.CookTime = source.CookTime;
+            recipe.Servings = source.Servings;
+        }
     }
 }

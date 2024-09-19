@@ -1,6 +1,8 @@
 ﻿using BSS.DishDepot.Domain.Entities;
+using BSS.DishDepot.Domain.Foundation;
 using BSS.DishDepot.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Data.Entity.Core;
 
 namespace BSS.DishDepot.Infrastructure.Dal;
 
@@ -75,6 +77,11 @@ public class UnitOfWork<TContext> : ReadOnlyUnitOfWork<TContext>, IUnitOfWork<TC
         {
             var result = await Context.SaveChangesAsync(cancellationToken);
             return result;
+        }
+        catch (Exception ex) when (ex is OptimisticConcurrencyException or DbUpdateConcurrencyException)
+        {
+            ClearChanges();
+            throw new ETagMismatchException(ex.Message);
         }
         catch (Exception)
         {

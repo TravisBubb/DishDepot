@@ -48,11 +48,12 @@ namespace BSS.DishDepot.Api.Controllers
                 routeValues, ControllerContext);
         }
 
-        //[Authorize]
-        //[HttpPut("{id}", Name = "PutRecipe")]
-        //public async Task<IActionResult> PutRecipe([FromRoute] string id, [FromBody] PutRecipeRequest request)
-        //{
-        //    return Ok();
-        //}
+        [Authorize]
+        [HttpPut("{id}", Name = "PutRecipe")]
+        public async Task<IActionResult> PutRecipe([FromRoute] string id, [FromBody] PutRecipeRequest request)
+        {
+            var result = await _mediator.Send(new PutRecipeCommand(id, request));
+            return _builder.OkResult<Recipe, RecipeResponse>(result, ControllerContext);
+        }
     }
 }
