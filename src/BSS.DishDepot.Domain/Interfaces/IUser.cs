@@ -1,7 +1,6 @@
-﻿namespace BSS.DishDepot.Domain.Interfaces
+﻿namespace BSS.DishDepot.Domain.Interfaces;
+
+public interface IUser
 {
-    public interface IUser
-    {
-        Guid UserId { get; set; }
-    }
+    Guid UserId { get; set; }
 }

@@ -2,7 +2,6 @@
 using BSS.DishDepot.Domain.Foundation;
 using MediatR;
 
-namespace BSS.DishDepot.Application.Cqrs.Users
-{
-    public record GetMyUserQuery : IRequest<Result<User>>;
-}
+namespace BSS.DishDepot.Application.Cqrs.Users;
+
+public sealed record GetMyUserQuery : IRequest<Result<User>>;

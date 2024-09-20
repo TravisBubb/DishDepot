@@ -2,19 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BSS.DishDepot.Infrastructure.Dal.Configurations
-{
-    public class RecipeConfiguration : EntityConfigurationMapper<Recipe>
-    {
-        public override void Configure(EntityTypeBuilder<Recipe> builder)
-        {
-            builder.HasMany(r => r.Steps)
-                .WithOne()
-                .OnDelete(DeleteBehavior.ClientNoAction);
+namespace BSS.DishDepot.Infrastructure.Dal.Configurations;
 
-            builder.HasMany(r => r.Ingredients)
-                .WithOne()
-                .OnDelete(DeleteBehavior.ClientNoAction);
-        }
+public sealed class RecipeConfiguration : EntityConfigurationMapper<Recipe>
+{
+    public override void Configure(EntityTypeBuilder<Recipe> builder)
+    {
+        builder.HasMany(r => r.Steps)
+            .WithOne()
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        builder.HasMany(r => r.Ingredients)
+            .WithOne()
+            .OnDelete(DeleteBehavior.ClientNoAction);
     }
 }

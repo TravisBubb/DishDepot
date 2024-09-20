@@ -1,10 +1,9 @@
 ﻿using System.Runtime.Serialization;
 
-namespace BSS.DishDepot.Application.Dto
+namespace BSS.DishDepot.Application.Dto;
+
+[DataContract]
+public class UserResponse
 {
-    [DataContract]
-    public class UserResponse
-    {
-        public User? User { get; set; }
-    }
+    public User? User { get; set; }
 }

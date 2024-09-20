@@ -6,38 +6,37 @@ using BSS.DishDepot.Domain.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace BSS.DishDepot.Application.Cqrs.Users
+namespace BSS.DishDepot.Application.Cqrs.Users;
+
+public sealed class PostUserCommandHandler : IRequestHandler<PostUserCommand, Result<User>>
 {
-    public class PostUserCommandHandler : IRequestHandler<PostUserCommand, Result<User>>
+    private readonly ILogger<PostUserCommandHandler> _logger;
+    private readonly IUnitOfWork _uow;
+
+    public PostUserCommandHandler(ILogger<PostUserCommandHandler> logger, IUnitOfWork uow)
     {
-        private readonly ILogger<PostUserCommandHandler> _logger;
-        private readonly IUnitOfWork _uow;
+        _logger = logger;
+        _uow = uow;
+    }
 
-        public PostUserCommandHandler(ILogger<PostUserCommandHandler> logger, IUnitOfWork uow)
+    public async Task<Result<User>> Handle(PostUserCommand request, CancellationToken cancellationToken)
+    {
+        try
         {
-            _logger = logger;
-            _uow = uow;
+            var passwordHash = PasswordHasher.HashPassword(request.Request.User.Password);
+            var entity = request.Request.User.ToEntity(passwordHash);
+
+            _uow.Insert(entity);
+
+            await _uow.SaveChanges(cancellationToken);
+
+            return Result<User>.Success(entity); 
         }
-
-        public async Task<Result<User>> Handle(PostUserCommand request, CancellationToken cancellationToken)
+        catch (Exception ex)
         {
-            try
-            {
-                var passwordHash = PasswordHasher.HashPassword(request.Request.User.Password);
-                var entity = request.Request.User.ToEntity(passwordHash);
-
-                _uow.Insert(entity);
-
-                await _uow.SaveChanges(cancellationToken);
-
-                return Result<User>.Success(entity); 
-            }
-            catch (Exception ex)
-            {
-                const string msg = "An unexpected error occurred attempting to create User.";
-                _logger.LogError(ex, msg);
-                return Result<User>.Unexpected(msg);
-            }
+            const string msg = "An unexpected error occurred attempting to create User.";
+            _logger.LogError(ex, msg);
+            return Result<User>.Unexpected(msg);
         }
     }
 }

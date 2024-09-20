@@ -1,7 +1,6 @@
-﻿namespace BSS.DishDepot.Domain.Interfaces
+﻿namespace BSS.DishDepot.Domain.Interfaces;
+
+public interface IIdentityContextAccessor
 {
-    public interface IIdentityContextAccessor
-    {
-        IIdentityContext IdentityContext { get; set; }
-    }
+    IIdentityContext IdentityContext { get; set; }
 }

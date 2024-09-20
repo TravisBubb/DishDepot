@@ -12,7 +12,7 @@ public enum ResultKind
 }
 
 [DataContract]
-public class Result
+public sealed class Result
 {
     [DataMember]
     public string? Message { get; set; }
@@ -158,7 +158,7 @@ public class Result
 }
 
 [DataContract]
-public class Result<T>
+public sealed class Result<T>
 {
     [DataMember]
     public T? Data { get; set; }

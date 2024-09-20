@@ -2,15 +2,7 @@
 using BSS.DishDepot.Domain.Foundation;
 using MediatR;
 
-namespace BSS.DishDepot.Application.Cqrs.Users
-{
-    public class AuthenticateUserCommand : IRequest<Result<AccessToken>>
-    {
-        public AuthenticateUserCommand(AuthenticateUserRequest request)
-        {
-            Request = request; 
-        }
+namespace BSS.DishDepot.Application.Cqrs.Users;
 
-        public AuthenticateUserRequest Request { get; }
-    }
-}
+public sealed record AuthenticateUserCommand(AuthenticateUserRequest Request) : IRequest<Result<AccessToken>>;
+

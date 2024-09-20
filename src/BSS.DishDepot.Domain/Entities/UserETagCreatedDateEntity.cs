@@ -1,9 +1,8 @@
 ﻿using BSS.DishDepot.Domain.Interfaces;
 
-namespace BSS.DishDepot.Domain.Entities
+namespace BSS.DishDepot.Domain.Entities;
+
+public abstract class UserETagCreatedDateEntity : ETagCreatedDateEntity, IUser
 {
-    public abstract class UserETagCreatedDateEntity : ETagCreatedDateEntity, IUser
-    {
-        public Guid UserId { get; set; }
-    }
+    public Guid UserId { get; set; }
 }

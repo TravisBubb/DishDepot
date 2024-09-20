@@ -1,17 +1,16 @@
 ﻿using System.Runtime.Serialization;
 
-namespace BSS.DishDepot.Application.Dto
+namespace BSS.DishDepot.Application.Dto;
+
+[DataContract]
+public class RecipeStep
 {
-    [DataContract]
-    public class RecipeStep
-    {
-        [DataMember]
-        public string? Id { get; set; }
+    [DataMember]
+    public string? Id { get; set; }
 
-        [DataMember]
-        public int? Sequence { get; set; }
+    [DataMember]
+    public int? Sequence { get; set; }
 
-        [DataMember]
-        public string? Description { get; set; }
-    }
+    [DataMember]
+    public string? Description { get; set; }
 }

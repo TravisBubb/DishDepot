@@ -1,9 +1,8 @@
 ﻿using BSS.DishDepot.Domain.Interfaces;
 
-namespace BSS.DishDepot.Domain.Services
+namespace BSS.DishDepot.Domain.Services;
+
+public class IdentityContextAccessor : IIdentityContextAccessor
 {
-    public class IdentityContextAccessor : IIdentityContextAccessor
-    {
-        public required IIdentityContext IdentityContext { get; set; }
-    }
+    public required IIdentityContext IdentityContext { get; set; }
 }

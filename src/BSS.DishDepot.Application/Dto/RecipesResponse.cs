@@ -1,11 +1,10 @@
 ﻿using System.Runtime.Serialization;
 
-namespace BSS.DishDepot.Application.Dto
+namespace BSS.DishDepot.Application.Dto;
+
+[DataContract]
+public class RecipesResponse
 {
-    [DataContract]
-    public class RecipesResponse
-    {
-        [DataMember]
-        public List<Recipe>? Recipes { get; set; }
-    }
+    [DataMember]
+    public List<Recipe>? Recipes { get; set; }
 }

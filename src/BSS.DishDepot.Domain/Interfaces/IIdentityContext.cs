@@ -1,8 +1,7 @@
-﻿namespace BSS.DishDepot.Domain.Interfaces
+﻿namespace BSS.DishDepot.Domain.Interfaces;
+
+public interface IIdentityContext
 {
-    public interface IIdentityContext
-    {
-        Guid UserId { get; }
-        string UserEmail { get; } 
-    }
+    Guid UserId { get; }
+    string UserEmail { get; } 
 }

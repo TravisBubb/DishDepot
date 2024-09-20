@@ -9,7 +9,7 @@ namespace BSS.DishDepot.Api.Controllers;
 
 [ApiController]
 [Route("api/users")]
-public class UserController : ControllerBase
+public sealed class UserController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IApiResultBuilder _builder;

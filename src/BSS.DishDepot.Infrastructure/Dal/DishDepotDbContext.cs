@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BSS.DishDepot.Infrastructure.Dal;
 
-public class DishDepotDbContext : DbContext
+public sealed class DishDepotDbContext : DbContext
 {
     public DishDepotDbContext(DbContextOptions<DishDepotDbContext> options) : base(options) { }
 

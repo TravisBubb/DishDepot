@@ -1,7 +1,6 @@
-﻿namespace BSS.DishDepot.Domain.Interfaces
+﻿namespace BSS.DishDepot.Domain.Interfaces;
+
+public interface ICreatedDate
 {
-    public interface ICreatedDate
-    {
-        DateTime CreatedDateTime { get; set; }
-    }
+    DateTime CreatedDateTime { get; set; }
 }

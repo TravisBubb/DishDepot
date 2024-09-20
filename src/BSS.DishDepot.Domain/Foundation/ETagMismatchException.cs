@@ -1,7 +1,6 @@
-﻿namespace BSS.DishDepot.Domain.Foundation
+﻿namespace BSS.DishDepot.Domain.Foundation;
+
+public sealed class ETagMismatchException : Exception
 {
-    public sealed class ETagMismatchException : Exception
-    {
-        public ETagMismatchException(string message) : base(message) { }
-    }
+    public ETagMismatchException(string message) : base(message) { }
 }

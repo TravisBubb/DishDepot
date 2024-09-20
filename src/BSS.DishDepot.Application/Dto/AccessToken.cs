@@ -1,11 +1,10 @@
 ﻿using System.Runtime.Serialization;
 
-namespace BSS.DishDepot.Application.Dto
+namespace BSS.DishDepot.Application.Dto;
+
+[DataContract]
+public class AccessToken
 {
-    [DataContract]
-    public class AccessToken
-    {
-        [DataMember]
-        public string? Token { get; set; }
-    }
+    [DataMember]
+    public string? Token { get; set; }
 }

@@ -5,36 +5,35 @@ using BSS.DishDepot.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace BSS.DishDepot.Application.Cqrs.Recipes
+namespace BSS.DishDepot.Application.Cqrs.Recipes;
+
+public sealed class PostRecipeCommandHandler : IRequestHandler<PostRecipeCommand, Result<Recipe>>
 {
-    public sealed class PostRecipeCommandHandler : IRequestHandler<PostRecipeCommand, Result<Recipe>>
+    private readonly ILogger<PostRecipeCommandHandler> _logger;
+    private readonly IUnitOfWork _uow;
+
+    public PostRecipeCommandHandler(ILogger<PostRecipeCommandHandler> logger, IUnitOfWork uow)
     {
-        private readonly ILogger<PostRecipeCommandHandler> _logger;
-        private readonly IUnitOfWork _uow;
+        _logger = logger;
+        _uow = uow;
+    }
 
-        public PostRecipeCommandHandler(ILogger<PostRecipeCommandHandler> logger, IUnitOfWork uow)
+    public async Task<Result<Recipe>> Handle(PostRecipeCommand request, CancellationToken cancellationToken)
+    {
+        try
         {
-            _logger = logger;
-            _uow = uow;
-        }
+            var entity = request.Request.Recipe.ToEntity();
 
-        public async Task<Result<Recipe>> Handle(PostRecipeCommand request, CancellationToken cancellationToken)
+            _uow.Insert(entity);
+            await _uow.SaveChanges(cancellationToken);
+
+            return Result<Recipe>.Success(entity);
+        } 
+        catch (Exception ex)
         {
-            try
-            {
-                var entity = request.Request.Recipe.ToEntity();
-
-                _uow.Insert(entity);
-                await _uow.SaveChanges(cancellationToken);
-
-                return Result<Recipe>.Success(entity);
-            } 
-            catch (Exception ex)
-            {
-                const string msg = "An unexpected error occurred attempting to create Recipe";
-                _logger.LogError(ex, msg);
-                return Result<Recipe>.Unexpected(msg);
-            }
+            const string msg = "An unexpected error occurred attempting to create Recipe";
+            _logger.LogError(ex, msg);
+            return Result<Recipe>.Unexpected(msg);
         }
     }
 }

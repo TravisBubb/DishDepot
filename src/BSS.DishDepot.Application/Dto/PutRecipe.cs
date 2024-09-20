@@ -4,9 +4,9 @@ using System.Runtime.Serialization;
 namespace BSS.DishDepot.Application.Dto;
 
 [DataContract]
-public class PostRecipeRequest
+public class PutRecipe : PostRecipe
 {
     [DataMember]
     [Required]
-    public PostRecipe Recipe { get; set; } = null!;
+    public byte[] ETag { get; set; } = null!;
 }
