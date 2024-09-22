@@ -9,7 +9,7 @@ services:
     depends_on:
       - bss.dishdepot.api
     ports:
-      - "6030:6030"     
+      - "8080:80"
   bss.dishdepot.api:
     image: ${DOCKER_REGISTRY-}bssdishdepotapi
     build:
@@ -18,7 +18,7 @@ services:
     depends_on:
       - dishdepot.database
     ports:
-      - "6035:6035"
+      - "6035:80"
   dishdepot.database:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: dishdepot.database

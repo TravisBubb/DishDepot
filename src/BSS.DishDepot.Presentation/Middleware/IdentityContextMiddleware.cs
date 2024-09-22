@@ -3,6 +3,7 @@ using BSS.DishDepot.Domain.Foundation;
 using BSS.DishDepot.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BSS.DishDepot.Presentation.Middleware;
 
@@ -17,20 +18,23 @@ public class IdentityContextMiddleware
 
     public async Task Invoke(HttpContext context, IUnitOfWork uow, IIdentityContextAccessor accessor)
     {
-        if (context.User?.Claims?.Any(c => c.Type == "UserId") ?? false)
+        if (context.User?.Claims?.Any(c => c.Type == ClaimTypes.NameIdentifier) ?? false)
         {
-            var claim = context.User.Claims.First(c => c.Type == "UserId");
+            var claim = context.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier);
             if (Guid.TryParse(claim.Value, out var userId))
             {
-                var user = await uow.Query<User>().FirstOrDefaultAsync(u => u.Id == userId);
-                if (user is not null)
-                {
-                    accessor.IdentityContext = new IdentityContext
-                    {
-                        UserId = userId,
-                        UserEmail = user.Email
-                    };
-                }
+                // TODO: Update this to read ApplicationUser entities from the Identity DB instead of the DishDepot DB
+                //var user = await uow.Query<User>().FirstOrDefaultAsync(u => u.Id == userId);
+                //if (user is not null)
+                //{
+                //    accessor.IdentityContext = new IdentityContext
+                //    {
+                //        UserId = userId,
+                //        UserEmail = user.Email
+                //    };
+                //}
+
+                accessor.IdentityContext = new IdentityContext { UserId = userId };
             }
         }
 

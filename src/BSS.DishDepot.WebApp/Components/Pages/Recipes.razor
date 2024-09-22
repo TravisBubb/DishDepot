@@ -1,8 +1,54 @@
 ﻿@page "/recipes"
-@rendermode InteractiveServer 
+@using BSS.DishDepot.Application.Dto
+@using BSS.DishDepot.Presentation.Services
+@using Microsoft.AspNetCore.Authorization
 
-<h3>Recipes</h3>
+@attribute [StreamRendering]
+@attribute [Authorize]
+
+@inject ApiClient ApiClient
+
+<PageTitle>Recipes</PageTitle>
+
+<AuthorizeView>
+    Hello @context.User.Identity?.Name!
+
+    <h1>Recipes</h1>
+
+    @if (_recipes is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var recipe in _recipes)
+                {
+                    <tr>
+                        <td>@recipe.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</AuthorizeView>
+
 
 @code {
+    private List<Recipe>? _recipes;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ApiClient.GetRecipes();
+        if (!result.IsSuccessful || result.Data is null) // TODO: Render error response
+            return;
+
+        _recipes = result.Data.Recipes;
+    }
 }
