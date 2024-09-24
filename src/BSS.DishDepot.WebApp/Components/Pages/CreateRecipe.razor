@@ -1,0 +1,77 @@
+﻿@page "/recipes/create"
+
+@using BSS.DishDepot.Application.Dto
+@using BSS.DishDepot.Presentation.Services
+@using BSS.DishDepot.WebApp.Components.Account.Shared
+@using Microsoft.AspNetCore.Authorization
+
+@inject ApiClient ApiClient
+
+@attribute [Authorize]
+
+<PageTitle>New Recipe</PageTitle>
+
+<h3>New Recipe</h3>
+
+<EditForm Model="Recipe" method="post" OnValidSubmit="PostRecipe" FormName="newRecipe">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="text-danger" role="alert" />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Recipe.Name" class="form-control" aria-required="true" />
+                <label for="Name">Name</label>
+                <ValidationMessage For="() => Recipe.Name" class="text-danger" />
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Recipe.Description" class="form-control" aria-required="true" />
+                <label for="Description">Description</label>
+                <ValidationMessage For="() => Recipe.Description" class="text-danger" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-floating mb-3">
+                <InputNumber type="int" @bind-Value="Recipe.PrepTime" class="form-control" aria-required="true" />
+                <label for="PrepTime">Preparation Time</label>
+                <ValidationMessage For="() => Recipe.PrepTime" class="text-danger" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-floating mb-3">
+                <InputNumber type="int" @bind-Value="Recipe.CookTime" class="form-control" aria-required="true" />
+                <label for="CookTime">Cook Time</label>
+                <ValidationMessage For="() => Recipe.CookTime" class="text-danger" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-floating mb-3">
+                <InputNumber type="int" @bind-Value="Recipe.Servings" class="form-control" aria-required="true" />
+                <label for="Servings">Servings</label>
+                <ValidationMessage For="() => Recipe.Servings" class="text-danger" />
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="w-25 btn btn-lg btn-primary">Create</button>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    private PostRecipe Recipe { get; set; } = new();
+
+    private async Task PostRecipe()
+    {
+        var request = new PostRecipeRequest { Recipe = Recipe };
+
+        var result = await ApiClient.CreateRecipe(request);
+        if (!result.IsSuccessful) // TODO: Display a banner indicating a failure occurred
+            return;
+
+        // TODO: Display a little banner indicating success        
+
+        // TODO: Redirect upon successful creation to either main recipes page or edit page
+    }
+}

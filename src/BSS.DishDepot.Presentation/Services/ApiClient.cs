@@ -46,6 +46,12 @@ public class ApiClient
         return await GetAsync<RecipesResponse>("recipes", token);
     }
 
+    public async Task<Result<RecipeResponse>> CreateRecipe(PostRecipeRequest request)
+    {
+        var token = GetToken();
+        return await PostAsync<PostRecipeRequest, RecipeResponse>("recipes", request, token);
+    }
+
     private string GetToken()
     {
         var user = _accessor.HttpContext.User;

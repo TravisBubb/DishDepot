@@ -7,12 +7,11 @@
 @attribute [Authorize]
 
 @inject ApiClient ApiClient
+@inject NavigationManager NavigationManager
 
 <PageTitle>Recipes</PageTitle>
 
 <AuthorizeView>
-    Hello @context.User.Identity?.Name!
-
     <h1>Recipes</h1>
 
     @if (_recipes is null)
@@ -21,10 +20,15 @@
     }
     else
     {
+        <a href="/recipes/create" class="w-10 btn btn-md btn-primary">New</a>
+
         <table class="table">
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Prep Time</th>
+                    <th>Cook Time</th>
+                    <th>Servings</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,6 +36,9 @@
                 {
                     <tr>
                         <td>@recipe.Name</td>
+                        <td>@recipe.PrepTime</td>
+                        <td>@recipe.CookTime</td>
+                        <td>@recipe.Servings</td>
                     </tr>
                 }
             </tbody>
@@ -41,6 +48,7 @@
 
 
 @code {
+    private string? nameFilter;
     private List<Recipe>? _recipes;
 
     protected override async Task OnInitializedAsync()
