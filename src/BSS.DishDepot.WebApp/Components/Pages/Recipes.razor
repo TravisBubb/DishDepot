@@ -25,6 +25,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Name</th>
                     <th>Prep Time</th>
                     <th>Cook Time</th>
@@ -35,6 +36,10 @@
                 @foreach (var recipe in _recipes)
                 {
                     <tr>
+                        <td>
+                            <a href="/recipes/@recipe.Id" class="btn btn-sm btn-primary">View</a>
+                            <a href="/recipes/@recipe.Id/edit" class="btn btn-sm btn-secondary">Edit</a>
+                        </td>
                         <td>@recipe.Name</td>
                         <td>@recipe.PrepTime</td>
                         <td>@recipe.CookTime</td>

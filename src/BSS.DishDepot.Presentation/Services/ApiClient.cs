@@ -2,8 +2,6 @@
 using BSS.DishDepot.Domain.Foundation;
 using BSS.DishDepot.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
-using System.Collections.Concurrent;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -15,7 +13,7 @@ public class ApiClient
     private readonly HttpClient _httpClient;
     private readonly IHttpContextAccessor _accessor;
     private readonly ITokenService _tokenService;
-    private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions SerializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         PropertyNameCaseInsensitive = true
@@ -44,6 +42,12 @@ public class ApiClient
     {
         var token = GetToken();
         return await GetAsync<RecipesResponse>("recipes", token);
+    }
+
+    public async Task<Result<RecipeResponse>> GetRecipe(Guid recipeId)
+    {
+        var token = GetToken();
+        return await GetAsync<RecipeResponse>($"recipes/{recipeId}", token);
     }
 
     public async Task<Result<RecipeResponse>> CreateRecipe(PostRecipeRequest request)

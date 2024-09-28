@@ -1,0 +1,91 @@
+﻿@page "/recipes/{RecipeId:guid}"
+@using BSS.DishDepot.Presentation.Services
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [StreamRendering]
+@attribute [Authorize]
+
+@inject ApiClient ApiClient
+
+<PageTitle>Recipe</PageTitle>
+
+<AuthorizeView>
+    @if (_recipe is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h1>@_recipe.Name</h1>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <p><strong>Servings:</strong> @_recipe.Servings</p>
+                        </div>
+                        <div class="col-4">
+                            <p><strong>Prep Time:</strong> @_recipe.PrepTime minutes</p>
+                        </div>
+                        <div class="col-4">
+                            <p><strong>Cook Time:</strong> @_recipe.CookTime minutes</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <p><strong>Description:</strong> @_recipe.Description</p>
+                    </div>
+
+                    <h2>Ingredients</h2>
+
+                    @if (_recipe.Ingredients is null || _recipe.Ingredients.Count == 0)
+                    {
+                        <p>There are no ingredients listed for this recipe. Click <a href="/recipes/@_recipe.Id/edit">here</a> to add some!</p>
+                    }
+                    else
+                    {
+                        <ul>
+                            @foreach (var ingredient in _recipe.Ingredients)
+                            {
+                                <li>@ingredient.Name, @ingredient.MeasurementValue @ingredient.MeasurementType.ToString()</li>
+                            }
+                        </ul>
+                    }
+
+
+                    <h2>Steps</h2>
+                    @if (_recipe.Steps is null || _recipe.Steps.Count == 0)
+                    {
+                        <p>There are no steps listed for this recipe. Click <a href="/recipes/@_recipe.Id/edit">here</a> to add some!</p>
+                    }
+                    else
+                    {
+                        <ol>
+                            @foreach (var step in _recipe.Steps.OrderBy(s => s.Sequence))
+                            {
+                                <li>@step.Description</li>
+                            }
+                        </ol>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public Guid RecipeId { get; set; }
+
+    private BSS.DishDepot.Application.Dto.Recipe _recipe { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ApiClient.GetRecipe(RecipeId);
+        if (!result.IsSuccessful || result.Data?.Recipe is null) // TODO: Render error response
+            return;
+
+        _recipe = result.Data.Recipe;
+    }
+}
