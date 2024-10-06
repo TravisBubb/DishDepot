@@ -1,11 +1,16 @@
-﻿@page "/recipes/create"
+﻿@page "/Recipes/create"
+
+@rendermode InteractiveServer
 
 @using BSS.DishDepot.Application.Dto
+@using BSS.DishDepot.Domain.Foundation
 @using BSS.DishDepot.Presentation.Services
 @using BSS.DishDepot.WebApp.Components.Account.Shared
 @using Microsoft.AspNetCore.Authorization
 
 @inject ApiClient ApiClient
+@inject ToastService ToastService
+@inject NavigationManager NavigationManager
 
 @attribute [Authorize]
 
@@ -16,62 +21,128 @@
 <EditForm Model="Recipe" method="post" OnValidSubmit="PostRecipe" FormName="newRecipe">
     <DataAnnotationsValidator />
     <ValidationSummary class="text-danger" role="alert" />
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Recipe.Name" class="form-control" aria-required="true" />
-                <label for="Name">Name</label>
-                <ValidationMessage For="() => Recipe.Name" class="text-danger" />
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Recipe.Description" class="form-control" aria-required="true" />
-                <label for="Description">Description</label>
-                <ValidationMessage For="() => Recipe.Description" class="text-danger" />
-            </div>
-        </div>
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Recipe Name</label>
+        <InputText id="name" class="form-control" @bind-Value="Recipe.Name" />
+        <ValidationMessage For="@(() => Recipe.Name)" />
     </div>
-    <div class="row">
-        <div class="col-md-3">
-            <div class="form-floating mb-3">
-                <InputNumber type="int" @bind-Value="Recipe.PrepTime" class="form-control" aria-required="true" />
-                <label for="PrepTime">Preparation Time</label>
-                <ValidationMessage For="() => Recipe.PrepTime" class="text-danger" />
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-floating mb-3">
-                <InputNumber type="int" @bind-Value="Recipe.CookTime" class="form-control" aria-required="true" />
-                <label for="CookTime">Cook Time</label>
-                <ValidationMessage For="() => Recipe.CookTime" class="text-danger" />
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-floating mb-3">
-                <InputNumber type="int" @bind-Value="Recipe.Servings" class="form-control" aria-required="true" />
-                <label for="Servings">Servings</label>
-                <ValidationMessage For="() => Recipe.Servings" class="text-danger" />
-            </div>
-        </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <InputTextArea id="description" class="form-control" @bind-Value="Recipe.Description" rows="3" />
+        <ValidationMessage For="@(() => Recipe.Description)" />
     </div>
-    <button type="submit" class="w-25 btn btn-lg btn-primary">Create</button>
+
+    <div class="mb-3">
+        <label for="servings" class="form-label">Servings</label>
+        <InputNumber id="servings" class="form-control" @bind-Value="Recipe.Servings" />
+        <ValidationMessage For="@(() => Recipe.Servings)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="prepTime" class="form-label">Prep Time (hh:mm)</label>
+        <InputNumber id="prepTime" class="form-control" @bind-Value="Recipe.PrepTime" />
+        <ValidationMessage For="@(() => Recipe.PrepTime)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="cookTime" class="form-label">Cook Time (hh:mm)</label>
+        <InputNumber id="cookTime" class="form-control" @bind-Value="Recipe.CookTime" />
+        <ValidationMessage For="@(() => Recipe.CookTime)" />
+    </div>
+
+    <div class="mb-3">
+        <h4>Ingredients</h4>
+        @foreach (var ingredient in Recipe.Ingredients!)
+        {
+            <div class="input-group mb-2">
+                <InputText class="form-control" @bind-Value="ingredient.Name" placeholder="Ingredient Name" />
+                <InputSelect @bind-Value="ingredient.MeasurementType">
+                    @foreach (var type in Enum.GetValues(typeof(MeasurementType)))
+                    {
+                        <option value="@type">@type</option>
+                    }
+                </InputSelect>
+                <InputNumber class="form-control" @bind-Value="ingredient.MeasurementValue" placeholder="Measurement Value" />
+                <button type="button" class="btn btn-danger" @onclick="() => RemoveIngredient(ingredient)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        }
+        <button type="button" class="btn btn-primary" @onclick="AddIngredient">Add Ingredient</button>
+    </div>
+
+    <div class="mb-3">
+        <h4>Steps</h4>
+        @foreach (var step in Recipe.Steps!)
+        {
+            <div class="input-group mb-2">
+                <InputText class="form-control" @bind-Value="step.Description" placeholder="Step Description" />
+                <button type="button" class="btn btn-danger" @onclick="() => RemoveStep(step)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        }
+        <button type="button" class="btn btn-primary" @onclick="AddStep">Add Step</button>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save Recipe</button>
 </EditForm>
 
 @code {
-    [SupplyParameterFromForm]
-    private PostRecipe Recipe { get; set; } = new();
+    private PostRecipe Recipe { get; set; } = new()
+        {
+            Ingredients = new List<PostRecipeIngredient>(),
+            Steps = new List<PostRecipeStep>()
+        };
+
+    protected override void OnInitialized()
+
+    {
+        Recipe.Ingredients ??= [];
+        Recipe.Steps ??= [];
+    }
 
     private async Task PostRecipe()
     {
         var request = new PostRecipeRequest { Recipe = Recipe };
 
         var result = await ApiClient.CreateRecipe(request);
-        if (!result.IsSuccessful) // TODO: Display a banner indicating a failure occurred
+        if (!result.IsSuccessful)
+        { 
+            ToastService.Notify(new(ToastType.Danger, "We were unable to save your recipe at this time. Please try again later."));
             return;
+        }
 
-        // TODO: Display a little banner indicating success        
+        ToastService.Notify(new ToastMessage(ToastType.Primary, "Recipe saved successfully."));
+    }
 
-        // TODO: Redirect upon successful creation to either main recipes page or edit page
+    private void AddIngredient()
+    {
+        Recipe.Ingredients ??= new List<PostRecipeIngredient>();
+        Recipe.Ingredients.Add(new PostRecipeIngredient());
+    }
+
+    private void RemoveIngredient(PostRecipeIngredient ingredient)
+    {
+        if (Recipe.Ingredients is null) return;
+
+        if (Recipe.Ingredients.Count > 0)
+            Recipe.Ingredients.Remove(ingredient);
+    }
+
+    private void AddStep()
+    {
+        Recipe.Steps ??= new List<PostRecipeStep>();
+        Recipe.Steps.Add(new PostRecipeStep());
+    }
+
+    private void RemoveStep(PostRecipeStep step)
+    {
+        if (Recipe.Steps is null) return;
+
+        if (Recipe.Steps.Count > 0)
+            Recipe.Steps.Remove(step);
     }
 }
