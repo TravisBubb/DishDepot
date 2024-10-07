@@ -18,6 +18,7 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseServiceProviderFactory(new DryIocServiceProviderFactory());
 
+builder.Services.AddHttpLogging(options => { });
 builder.Services.AddLogging();
 builder.Services.AddMvc()
     .AddJsonOptions(options =>
@@ -94,6 +95,8 @@ builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, Mapper>();
 
 var app = builder.Build();
+
+app.UseHttpLogging();
 
 app.UseAuthentication();
 app.UseMiddleware<IdentityContextMiddleware>();

@@ -26,13 +26,21 @@ public sealed class PutRecipeCommandHandler : IRequestHandler<PutRecipeCommand, 
             if (!Guid.TryParse(request.RecipeId, out var recipeId))
                 return Result<Recipe>.NotFound($"Recipe {request.RecipeId} not found.");
 
-            var recipe = await _uow.Query<Recipe>().FirstOrDefaultAsync(r => r.Id == recipeId, cancellationToken);
+            var recipe = await _uow.Query<Recipe>()
+                .Include(r => r.Ingredients)
+                .Include(r => r.Steps)
+                .FirstOrDefaultAsync(r => r.Id == recipeId, cancellationToken);
+
             if (recipe is null)
                 return Result<Recipe>.NotFound($"Recipe {request.RecipeId} not found.");
+
+            recipe.Ingredients?.ForEach(_uow.Delete);
+            recipe.Steps?.ForEach(_uow.Delete);
 
             recipe.UpdateFromDto(request.Request.Recipe);
 
             _uow.Update(recipe);
+
             await _uow.SaveChanges(cancellationToken);
 
             return Result<Recipe>.Success(recipe);

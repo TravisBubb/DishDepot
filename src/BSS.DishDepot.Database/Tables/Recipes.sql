@@ -8,8 +8,7 @@
 	[CookTime] INT NOT NULL,
 	[Servings] INT NOT NULL,
 	[CreatedDateTime] DATETIME NOT NULL DEFAULT GETDATE(),	
-	[ETag] ROWVERSION NOT NULL,
-	CONSTRAINT FK_Recipes_User FOREIGN KEY (UserId) REFERENCES DishDepot.Users(Id)
+	[ETag] ROWVERSION NOT NULL
 );
 
 GO

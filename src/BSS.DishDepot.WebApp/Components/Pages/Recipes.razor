@@ -1,8 +1,68 @@
 ﻿@page "/recipes"
-@rendermode InteractiveServer 
 
-<h3>Recipes</h3>
+@rendermode InteractiveServer
+
+@using BSS.DishDepot.Application.Dto
+@using BSS.DishDepot.Presentation.Services
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
+@inject ApiClient ApiClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>Recipes</PageTitle>
+
+<AuthorizeView>
+    <h1>Recipes</h1>
+
+    @if (_recipes is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <a href="/recipes/create" class="w-10 btn btn-md btn-primary">New</a>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Prep Time</th>
+                    <th>Cook Time</th>
+                    <th>Servings</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var recipe in _recipes)
+                {
+                    <tr>
+                        <td>
+                            <a href="/recipes/@recipe.Id" class="btn btn-sm btn-primary">View</a>
+                            <a href="/recipes/@recipe.Id/edit" class="btn btn-sm btn-secondary">Edit</a>
+                        </td>
+                        <td>@recipe.Name</td>
+                        <td>@recipe.PrepTime</td>
+                        <td>@recipe.CookTime</td>
+                        <td>@recipe.Servings</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</AuthorizeView>
+
 
 @code {
+    private List<Application.Dto.Recipe>? _recipes;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ApiClient.GetRecipes();
+        if (!result.IsSuccessful || result.Data is null) // TODO: Render error response
+            return;
+
+        _recipes = result.Data.Recipes;
+    }
 }

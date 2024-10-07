@@ -1,0 +1,38 @@
+﻿@page "/Recipes/create"
+
+@rendermode InteractiveServer
+
+@using BSS.DishDepot.Application.Dto
+@using BSS.DishDepot.Domain.Foundation
+@using BSS.DishDepot.Presentation.Services
+@using BSS.DishDepot.WebApp.Components.Account.Shared
+@using Microsoft.AspNetCore.Authorization
+
+@inject ApiClient ApiClient
+@inject ToastService ToastService
+
+@attribute [Authorize]
+
+<PageTitle>New Recipe</PageTitle>
+
+<h3>New Recipe</h3>
+
+<RecipeForm Recipe="Recipe" SubmitAction="PostRecipe" />
+
+@code {
+    private PostRecipe Recipe = new();
+
+    private async Task PostRecipe()
+    {
+        var request = new PostRecipeRequest { Recipe = Recipe };
+
+        var result = await ApiClient.CreateRecipe(request);
+        if (!result.IsSuccessful)
+        { 
+            ToastService.Notify(new(ToastType.Danger, "We were unable to save your recipe at this time. Please try again later."));
+            return;
+        }
+
+        ToastService.Notify(new ToastMessage(ToastType.Primary, "Recipe saved successfully."));
+    }
+}

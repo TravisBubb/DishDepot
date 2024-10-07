@@ -1,0 +1,54 @@
+﻿@page "/recipes/{RecipeId:guid}/edit"
+
+@rendermode InteractiveServer
+
+@using BSS.DishDepot.Application.Dto
+@using BSS.DishDepot.Presentation.Services
+@using MapsterMapper
+@using Microsoft.AspNetCore.Authorization
+
+@inject ApiClient ApiClient
+@inject ToastService ToastService
+@inject IMapper Mapper
+
+@attribute [Authorize]
+
+<PageTitle>Edit Recipe</PageTitle>
+
+<h3>Edit Recipe</h3>
+
+<RecipeForm Recipe="RecipeRequest" SubmitAction="PutRecipe" />
+
+@code {
+    [Parameter]
+    public Guid RecipeId { get; set; }
+
+    private PutRecipe RecipeRequest = new();
+
+    protected override async void OnInitialized()
+    {
+        var result = await ApiClient.GetRecipe(RecipeId);
+        if (!result.IsSuccessful)
+        {
+            ToastService.Notify(new(ToastType.Danger, "We were unable to load your recipe. Please try again later."));
+            return;
+        }
+
+        RecipeRequest = Mapper.Map<PutRecipe>(result.Data!.Recipe!);
+        StateHasChanged();
+    }
+
+    private async Task PutRecipe()
+    {
+        var request = new PutRecipeRequest { Recipe = RecipeRequest };
+
+        var result = await ApiClient.UpdateRecipe(RecipeId, request);
+        if (!result.IsSuccessful)
+        {
+            ToastService.Notify(new(ToastType.Danger, "We were unable to save your recipe at this time. Please try again later."));
+            return;
+        }
+
+        ToastService.Notify(new(ToastType.Success, "Recipe saved successfully."));
+    }
+}

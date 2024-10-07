@@ -3,5 +3,5 @@
 public interface IIdentityContext
 {
     Guid UserId { get; }
-    string UserEmail { get; } 
+    string? UserEmail { get; } 
 }

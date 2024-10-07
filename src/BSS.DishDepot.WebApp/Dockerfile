@@ -3,17 +3,18 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 6030
+EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/BSS.DishDepot.WebApp/BSS.DishDepot.WebApp.csproj", "src/BSS.DishDepot.WebApp/"]
+COPY ["src/BSS.DishDepot.Presentation/BSS.DishDepot.Presentation.csproj", "src/BSS.DishDepot.Presentation/"]
 COPY ["src/BSS.DishDepot.Application/BSS.DishDepot.Application.csproj", "src/BSS.DishDepot.Application/"]
 COPY ["src/BSS.DishDepot.Domain/BSS.DishDepot.Domain.csproj", "src/BSS.DishDepot.Domain/"]
 RUN dotnet restore "./src/BSS.DishDepot.WebApp/BSS.DishDepot.WebApp.csproj"
 COPY . .
-WORKDIR /src/BSS.DishDepot.WebApp
+WORKDIR "/src/src/BSS.DishDepot.WebApp"
 RUN dotnet build "./BSS.DishDepot.WebApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
