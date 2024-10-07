@@ -30,12 +30,12 @@ public class ApiClient
 
     public async Task<Result<UserResponse>> RegisterUser(PostUserRequest request)
     {
-        return await PostAsync<PostUserRequest, UserResponse>("users", request);
+        return await SendAsync<PostUserRequest, UserResponse>(HttpMethod.Post, "users", request);
     }
 
     public async Task<Result<AccessToken>> Login(AuthenticateUserRequest request)
     {
-        return await PostAsync<AuthenticateUserRequest, AccessToken>("users/authenticate", request);
+        return await SendAsync<AuthenticateUserRequest, AccessToken>(HttpMethod.Post, "users/authenticate", request);
     }
 
     public async Task<Result<RecipesResponse>> GetRecipes()
@@ -53,7 +53,13 @@ public class ApiClient
     public async Task<Result<RecipeResponse>> CreateRecipe(PostRecipeRequest request)
     {
         var token = GetToken();
-        return await PostAsync<PostRecipeRequest, RecipeResponse>("recipes", request, token);
+        return await SendAsync<PostRecipeRequest, RecipeResponse>(HttpMethod.Post, "recipes", request, token);
+    }
+
+    public async Task<Result<RecipeResponse>> UpdateRecipe(Guid recipeId, PutRecipeRequest request)
+    {
+        var token = GetToken();
+        return await SendAsync<PutRecipeRequest, RecipeResponse>(HttpMethod.Put, $"recipes/{recipeId}", request, token);
     }
 
     private string GetToken()
@@ -87,7 +93,7 @@ public class ApiClient
         }
     }
 
-    private async Task<Result<TResponse>> PostAsync<TRequest, TResponse>(string path, TRequest request, string? token = null)
+    private async Task<Result<TResponse>> SendAsync<TRequest, TResponse>(HttpMethod method, string path, TRequest request, string? token = null)
     {
         try
         {
@@ -95,7 +101,7 @@ public class ApiClient
 
             using var httpRequest = new HttpRequestMessage
             {
-                Method = HttpMethod.Post,
+                Method = method,
                 Content = jsonContent,
                 RequestUri = new Uri(BaseUrl + path)
             };

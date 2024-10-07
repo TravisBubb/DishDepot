@@ -1,9 +1,11 @@
 ﻿@page "/recipes"
+
+@rendermode InteractiveServer
+
 @using BSS.DishDepot.Application.Dto
 @using BSS.DishDepot.Presentation.Services
 @using Microsoft.AspNetCore.Authorization
 
-@attribute [StreamRendering]
 @attribute [Authorize]
 
 @inject ApiClient ApiClient
@@ -53,8 +55,7 @@
 
 
 @code {
-    private string? nameFilter;
-    private List<Recipe>? _recipes;
+    private List<Application.Dto.Recipe>? _recipes;
 
     protected override async Task OnInitializedAsync()
     {

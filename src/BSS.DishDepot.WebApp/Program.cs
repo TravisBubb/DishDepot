@@ -1,9 +1,12 @@
+using BSS.DishDepot.Application.Mappers;
 using BSS.DishDepot.Domain;
 using BSS.DishDepot.Domain.Interfaces;
 using BSS.DishDepot.Presentation.Services;
 using BSS.DishDepot.WebApp.Components;
 using BSS.DishDepot.WebApp.Components.Account;
 using BSS.DishDepot.WebApp.Data;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +46,15 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 builder.Services.AddSingleton<ITokenService, TokenService>();
 
 builder.Services.AddHttpClient<ApiClient>();
+
+var config = new TypeAdapterConfig();
+config.Default.Settings.IgnoreNullValues = true;
+config.Default.Settings.PreserveReference = true;
+
+config.Scan(typeof(UserMapper).Assembly);
+
+builder.Services.AddSingleton(config);
+builder.Services.AddScoped<IMapper, Mapper>();
 
 var app = builder.Build();
 

@@ -1,8 +1,10 @@
 ﻿@page "/recipes/{RecipeId:guid}"
+
+@rendermode InteractiveServer
+
 @using BSS.DishDepot.Presentation.Services
 @using Microsoft.AspNetCore.Authorization
 
-@attribute [StreamRendering]
 @attribute [Authorize]
 
 @inject ApiClient ApiClient

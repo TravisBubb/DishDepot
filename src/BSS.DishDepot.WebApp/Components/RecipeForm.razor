@@ -1,0 +1,119 @@
+﻿@rendermode InteractiveServer
+
+@using BSS.DishDepot.Application.Dto
+@using BSS.DishDepot.Domain.Foundation
+
+<EditForm Model="Recipe" method="post" OnValidSubmit="SubmitAction" FormName="newRecipe">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="text-danger" role="alert" />
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Recipe Name</label>
+        <InputText id="name" class="form-control" @bind-Value="Recipe.Name" />
+        <ValidationMessage For="@(() => Recipe.Name)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <InputTextArea id="description" class="form-control" @bind-Value="Recipe.Description" rows="3" />
+        <ValidationMessage For="@(() => Recipe.Description)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="servings" class="form-label">Servings</label>
+        <InputNumber id="servings" class="form-control" @bind-Value="Recipe.Servings" />
+        <ValidationMessage For="@(() => Recipe.Servings)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="prepTime" class="form-label">Prep Time (hh:mm)</label>
+        <InputNumber id="prepTime" class="form-control" @bind-Value="Recipe.PrepTime" />
+        <ValidationMessage For="@(() => Recipe.PrepTime)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="cookTime" class="form-label">Cook Time (hh:mm)</label>
+        <InputNumber id="cookTime" class="form-control" @bind-Value="Recipe.CookTime" />
+        <ValidationMessage For="@(() => Recipe.CookTime)" />
+    </div>
+
+    <div class="mb-3">
+        <h4>Ingredients</h4>
+        @foreach (var ingredient in Recipe.Ingredients!)
+        {
+            <div class="input-group mb-2">
+                <InputText class="form-control" @bind-Value="ingredient.Name" placeholder="Ingredient Name" />
+                <InputSelect @bind-Value="ingredient.MeasurementType">
+                    @foreach (var type in Enum.GetValues(typeof(MeasurementType)))
+                    {
+                        <option value="@type">@type</option>
+                    }
+                </InputSelect>
+                <InputNumber class="form-control" @bind-Value="ingredient.MeasurementValue" placeholder="Measurement Value" />
+                <button type="button" class="btn btn-danger" @onclick="() => RemoveIngredient(ingredient)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        }
+        <button type="button" class="btn btn-primary" @onclick="AddIngredient">Add Ingredient</button>
+    </div>
+
+    <div class="mb-3">
+        <h4>Steps</h4>
+        @foreach (var step in Recipe.Steps!)
+        {
+            <div class="input-group mb-2">
+                <InputText class="form-control" @bind-Value="step.Description" placeholder="Step Description" />
+                <button type="button" class="btn btn-danger" @onclick="() => RemoveStep(step)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        }
+        <button type="button" class="btn btn-primary" @onclick="AddStep">Add Step</button>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save Recipe</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public PostRecipe Recipe { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<EditContext> SubmitAction { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Recipe ??= new PostRecipe();
+        Recipe.Ingredients ??= [];
+        Recipe.Steps ??= [];
+    }
+
+    private void AddIngredient()
+    {
+        Recipe.Ingredients ??= new List<PostRecipeIngredient>();
+        Recipe.Ingredients.Add(new PostRecipeIngredient());
+    }
+
+    private void RemoveIngredient(PostRecipeIngredient ingredient)
+    {
+        if (Recipe.Ingredients is null) return;
+
+        if (Recipe.Ingredients.Count > 0)
+            Recipe.Ingredients.Remove(ingredient);
+    }
+
+    private void AddStep()
+    {
+        Recipe.Steps ??= new List<PostRecipeStep>();
+        Recipe.Steps.Add(new PostRecipeStep());
+    }
+
+    private void RemoveStep(PostRecipeStep step)
+    {
+        if (Recipe.Steps is null) return;
+
+        if (Recipe.Steps.Count > 0)
+            Recipe.Steps.Remove(step);
+    }
+}

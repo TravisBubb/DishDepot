@@ -18,6 +18,9 @@ public sealed class RecipeMapper : IRegister
 
         config.ForType<List<Recipe>, RecipesResponse>()
             .Map(dest => dest.Recipes, src => src);
+
+        config.ForType<Dto.Recipe, PutRecipe>()
+            .Map(dest => dest.ETag, src => Convert.FromBase64String(src.ETag));
     }
 }
 
@@ -69,5 +72,8 @@ public static class RecipeMapperExtensions
         recipe.PrepTime = source.PrepTime;
         recipe.CookTime = source.CookTime;
         recipe.Servings = source.Servings;
+
+        recipe.Ingredients = source.Ingredients?.Select(i => i.ToEntity(recipe.Id)).ToList();
+        recipe.Steps = source.Steps?.Select(s => s.ToEntity(recipe.Id)).ToList();
     }
 }
